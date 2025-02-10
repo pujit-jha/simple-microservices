@@ -1,0 +1,45 @@
+version: '3'
+
+services:
+  post-service:
+    build: ./posts
+    ports:
+      - "8001:8001"
+    depends_on:
+      - event-bus
+
+  comment-service:
+    build: ./comments
+    ports:
+      - "8002:8002"
+    depends_on:
+      - event-bus
+
+  query-service:
+    build: ./query
+    ports:
+      - "8003:8003"
+    depends_on:
+      - post-service
+      - comment-service
+
+  moderation-service:
+    build: ./moderation
+    ports:
+      - "8004:8004"
+    depends_on:
+      - comment-service
+
+  event-bus:
+    build: ./event-bus
+    ports:
+      - "8005:8005"
+
+  frontend:
+    build: ./client
+    ports:
+      - "3000:3000"
+
+networks:
+  default:
+    driver: bridge
